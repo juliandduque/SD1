@@ -35,14 +35,14 @@
         heatmap = new HeatmapOverlay(map,
             {
                 // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-                "radius": 2,
-                "maxOpacity": .8,
+                "radius": 100,
+                "maxOpacity": 10,
                 // scales the radius based on map zoom
-                "scaleRadius": true,
+                "scaleRadius": false,
                 // if set to false the heatmap uses the global maximum for colorization
                 // if activated: uses the data maximum within the current map boundaries
                 //   (there will always be a red spot with useLocalExtremas true)
-                "useLocalExtrema": true,
+                "useLocalExtrema": false,
                 // which field name in your data represents the latitude - default "lat"
                 latField: 'lat',
                 // which field name in your data represents the longitude - default "lng"
@@ -52,37 +52,37 @@
             }
         );
         var testData = {
-            max: 8,
+            max: 100,
             data:
                 [{
                     lat: 28.600540,
                     lng: -81.197614,
-                    count: 3
+                    count: 30
                 },
                 {
                     lat: 28.600691,
                     lng: -81.197932,
-                    count: 6
+                    count: 86
                 },
                 {
                     lat: 28.600691,
                     lng: -81.197732,
-                    count: 4
+                    count: 43
                     },
                 {
                     lat: 28.600491,
                     lng: -81.197932,
-                    count: 6
+                    count: 64
                 },
                 {
                     lat: 28.600361,
                     lng: -81.197962,
-                    count: 8
+                    count: 90
                 },
                 {
                     lat: 28.600471,
                     lng: -81.197769,
-                    count: 6
+                    count: 60
                 }]
         };
         google.maps.event.addListenerOnce(map, "idle", function () {
