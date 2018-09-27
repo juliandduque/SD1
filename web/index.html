@@ -38,11 +38,11 @@
                 "radius": 100,
                 "maxOpacity": 10,
                 // scales the radius based on map zoom
-                "scaleRadius": false,
+                "scaleRadius": true,
                 // if set to false the heatmap uses the global maximum for colorization
                 // if activated: uses the data maximum within the current map boundaries
                 //   (there will always be a red spot with useLocalExtremas true)
-                "useLocalExtrema": false,
+                "useLocalExtrema": true,
                 // which field name in your data represents the latitude - default "lat"
                 latField: 'lat',
                 // which field name in your data represents the longitude - default "lng"
@@ -52,37 +52,37 @@
             }
         );
         var testData = {
-            max: 100,
+            max: 8,
             data:
                 [{
                     lat: 28.600540,
                     lng: -81.197614,
-                    count: 30
+                    count: 3
                 },
                 {
                     lat: 28.600691,
                     lng: -81.197932,
-                    count: 86
+                    count: 6
                 },
                 {
                     lat: 28.600691,
                     lng: -81.197732,
-                    count: 43
+                    count: 4
                     },
                 {
                     lat: 28.600491,
                     lng: -81.197932,
-                    count: 64
+                    count: 6
                 },
                 {
                     lat: 28.600361,
                     lng: -81.197962,
-                    count: 90
+                    count: 8
                 },
                 {
                     lat: 28.600471,
                     lng: -81.197769,
-                    count: 60
+                    count: 6
                 }]
         };
         google.maps.event.addListenerOnce(map, "idle", function () {
