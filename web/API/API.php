@@ -66,7 +66,7 @@ function createRecord($dbConnection, $jsonPayload)
         returnError('Time cannot be empty.');
     } else if (strlen($deviceID) > 45) {
         returnError('deviceID cannot exceed 45 characterrs.');
-    } else if (strlen(frequency) <= 0) {
+    } else if (strlen($frequency) <= 0) {
         returnError('frequency cannot be empty.');
     } else if (strlen($deviceID) <= 0) {
         returnError('deviceID cannot be empty.');
