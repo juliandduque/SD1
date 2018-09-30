@@ -12,7 +12,7 @@ $dbConnection = establishConnection();
 
 file_put_contents("php://stderr", "connection with database established!!!".PHP_EOL);
 
-file_put_contents("php://stderr", $jsonPayload['function'].PHP_EOL);
+file_put_contents("php://stderr", "starting function:". $jsonPayload['function'].PHP_EOL);
 
 // Call the client-requested function
 callVariableFunction($dbConnection, $jsonPayload);
