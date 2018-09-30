@@ -57,6 +57,8 @@ function createRecord($dbConnection, $jsonPayload)
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 
+		file_put_contents("php://stderr", $time.PHP_EOL);
+
     // Check for various error-inducing situations
     if (strlen($time) > 45) {
         returnError('Time cannot exceed 45 characters.');
