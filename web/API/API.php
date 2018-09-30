@@ -57,7 +57,6 @@ function createRecord($dbConnection, $jsonPayload)
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 
-		file_put_contents("php://stderr", $deviceID.PHP_EOL);
 
     // Check for various error-inducing situations
     if (strlen($time) > 45) {
@@ -74,6 +73,11 @@ function createRecord($dbConnection, $jsonPayload)
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
         $query = $dbConnection->prepare("INSERT INTO data (datetime, Frequency, deviceID, key) VALUES ('?', '?', '?', '?')");
+		
+		file_put_contents("php://stderr", $deviceID.PHP_EOL);
+		file_put_contents("php://stderr", $time.PHP_EOL);
+		file_put_contents("php://stderr", $frequency.PHP_EOL);
+
         $query->bind_param('siss', $time, $frequency, $deviceID, '123');
         $query->execute();
 		
