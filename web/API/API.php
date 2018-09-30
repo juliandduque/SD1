@@ -73,7 +73,7 @@ function createRecord($dbConnection, $jsonPayload)
     } else {
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
-        $query = $dbConnection->prepare("INSERT INTO data (time, frequency, deviceID) VALUES ('?', '?', '?')");
+        $query = $dbConnection->prepare("INSERT INTO data ('time', frequency, deviceID) VALUES ('?', '?', '?')");
         $query->bind_param('sis', $time, $frequency, $deviceID);
         $query->execute();
 		
