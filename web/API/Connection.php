@@ -79,7 +79,7 @@ function readSecrets()
 function getJSONPayload()
 {
     // Get the JSON decoded string from the client-side application
-    $jsonPayload = $_REQUEST
+    $jsonPayload = json_decode(file_get_contents('php://input'), true);
 
     // Return the array
     return $jsonPayload;
