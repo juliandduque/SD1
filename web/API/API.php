@@ -53,7 +53,7 @@ function callVariableFunction($dbConnection, $jsonPayload)
 function createRecord($dbConnection, $jsonPayload)
 {
     // Get the username and password from the JSON payload
-    $time = trim($jsonPayload['time']);
+    $time = ($jsonPayload['time']);
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 
