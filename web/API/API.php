@@ -66,15 +66,15 @@ function createRecord($dbConnection, $jsonPayload)
         returnError('Time cannot be empty.');
     } else if (strlen($deviceID) > 45) {
         returnError('deviceID cannot exceed 45 characterrs.');
-    } else if (strlen(frequency) <= 0) {
+    } else if (strlen($frequency) <= 0) {
         returnError('frequency cannot be empty.');
     } else if (strlen($deviceID) <= 0) {
         returnError('deviceID cannot be empty.');
     } else {
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
-        $query = $dbConnection->prepare("INSERT INTO data (time, frequency, deviceID) VALUES ('?', '?', '?')");
-        $query->bind_param('sis', $time, $frequency, $deviceID);
+        $query = $dbConnection->prepare("INSERT INTO data (datetime, Frequency, deviceID, key) VALUES ('?', '?', '?', '?')");
+        $query->bind_param('siss', $time, $frequency, $deviceID, '123');
         $query->execute();
 		
         // Result from the query
