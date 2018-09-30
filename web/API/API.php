@@ -53,16 +53,16 @@ function callVariableFunction($dbConnection, $jsonPayload)
 function createRecord($dbConnection, $jsonPayload)
 {
     // Get the username and password from the JSON payload
-    $time = ($jsonPayload['time']);
+    $datetime = ($jsonPayload['time']);
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 
 		file_put_contents("php://stderr", $deviceID.PHP_EOL);
 
     // Check for various error-inducing situations
-    if (strlen($time) > 45) {
+    if (strlen($datetime) > 45) {
         returnError('Time cannot exceed 45 characters.');
-    } else if (strlen($time) <= 0) {
+    } else if (strlen($datetime) <= 0) {
         returnError('Time cannot be empty.');
     } else if (strlen($deviceID) > 45) {
         returnError('deviceID cannot exceed 45 characterrs.');
@@ -73,8 +73,8 @@ function createRecord($dbConnection, $jsonPayload)
     } else {
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
-        $query = $dbConnection->prepare("INSERT INTO data ('time', frequency, deviceID) VALUES ('?', '?', '?')");
-        $query->bind_param('sis', $time, $frequency, $deviceID);
+        $query = $dbConnection->prepare("INSERT INTO data (datetime, Frequency, deviceID) VALUES ('?', '?', '?')");
+        $query->bind_param('sis', $datetime, $frequency, $deviceID);
         $query->execute();
 		
         // Result from the query
