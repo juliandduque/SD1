@@ -5,7 +5,7 @@ require 'Connection.php';
 
 // Receive decoded JSON payload from client
 $jsonPayload = getJSONPayload();
-
+echo($jsonPayload);
 // Establish a connection to the database
 $dbConnection = establishConnection();
 
