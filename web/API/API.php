@@ -6,10 +6,13 @@ require 'Connection.php';
 // Receive decoded JSON payload from client
 $jsonPayload = getJSONPayload();
 
-file_put_contents("php://stderr", "sending push !!!".PHP_EOL);
-file_put_contents("php://stderr", $jsonPayload.PHP_EOL);
+file_put_contents("php://stderr", "starting connection with database !!!".PHP_EOL);
 // Establish a connection to the database
 $dbConnection = establishConnection();
+
+file_put_contents("php://stderr", "connection with database established!!!".PHP_EOL);
+
+file_put_contents("php://stderr", "calling function: "$jsonPayload["function"].PHP_EOL);
 
 // Call the client-requested function
 callVariableFunction($dbConnection, $jsonPayload);
