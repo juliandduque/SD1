@@ -13,7 +13,7 @@ function establishConnection()
         // Try to establish a connection
         // The @ suppresses warning messages so they don't print on the page
 		file_put_contents("php://stderr", $secrets['host'] . " " . $secrets['username']. " " . $secrets['passwd']. " " . $secrets['dbname']);
-        $dbConnection = @new mysqli($secrets['host'], $secrets['username'], $secrets['passwd'], $secrets['dbname']);
+        $dbConnection = @new mysqli($secrets['host'], $secrets['username'], $secrets['passwd'], $secrets['dbname'], 3306);
 		file_put_contents("php://stderr", "connection stablished");
     } catch (Exception $e) {
         // If there is an exception (not warning or error), return exception message as JSON string
