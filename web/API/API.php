@@ -57,14 +57,14 @@ function createRecord($dbConnection, $jsonPayload)
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 
-		file_put_contents("php://stderr", $time.PHP_EOL);
+		file_put_contents("php://stderr", $deviceID.PHP_EOL);
 
     // Check for various error-inducing situations
     if (strlen($time) > 45) {
         returnError('Time cannot exceed 45 characters.');
     } else if (strlen($time) <= 0) {
         returnError('Time cannot be empty.');
-    } else if (strlen($deviceID) > 0) {
+    } else if (strlen($deviceID) > 45) {
         returnError('deviceID cannot exceed 45 characterrs.');
     } else if (strlen(frequency) <= 0) {
         returnError('frequency cannot be empty.');
