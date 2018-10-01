@@ -56,7 +56,7 @@ function createRecord($dbConnection, $jsonPayload)
     $time = ($jsonPayload['time']);
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
-	$strength = $jsonPayload['strength']
+	$strength = $jsonPayload['strength'];
 
     // Check for various error-inducing situations
     if (strlen($time) > 45) {
