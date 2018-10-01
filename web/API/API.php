@@ -72,8 +72,7 @@ function createRecord($dbConnection, $jsonPayload)
     } else {
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
-		file_put_contents("php://stderr", "INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `key`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '1234')");
-        $query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `key`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '1234')");
+        $query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`) VALUES ('".$time."', '".$frequency."', '".$deviceID."')");
         $query->execute();
 		
         // Result from the query
