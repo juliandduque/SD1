@@ -56,7 +56,7 @@ function createRecord($dbConnection, $jsonPayload)
     $time = ($jsonPayload['time']);
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
-
+	$strength = $jsonPayload['strength']
 
     // Check for various error-inducing situations
     if (strlen($time) > 45) {
@@ -72,7 +72,7 @@ function createRecord($dbConnection, $jsonPayload)
     } else {
   // This block uses prepared statements and parameterized queries to protect against SQL injection
         // MySQL query to add the username and password into the database
-        $query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`) VALUES ('".$time."', '".$frequency."', '".$deviceID."')");
+        $query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `strength`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '".$strength."')");
         $query->execute();
 		
         // Result from the query
