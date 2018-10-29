@@ -53,17 +53,13 @@ function callVariableFunction($dbConnection, $jsonPayload)
 function createRecord($dbConnection, $jsonPayload)
 {
     // Get the username and password from the JSON payload
-    $time = ($jsonPayload['time']);
     $frequency = $jsonPayload['frequency'];
     $deviceID = $jsonPayload['deviceID'];
 	$strength = $jsonPayload['strength'];
+	$time = time();
 
     // Check for various error-inducing situations
-    if (strlen($time) > 45) {
-        returnError('Time cannot exceed 45 characters.');
-    } else if (strlen($time) <= 0) {
-        returnError('Time cannot be empty.');
-    } else if (strlen($deviceID) > 45) {
+    if (strlen($deviceID) > 45) {
         returnError('deviceID cannot exceed 45 characterrs.');
     } else if (strlen($frequency) <= 0) {
         returnError('frequency cannot be empty.');
