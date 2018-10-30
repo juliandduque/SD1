@@ -102,10 +102,10 @@ function getLatestRecords($dbConnection, $jsonPayload)
     checkForEmptyProperties([$userID, $numberOfPosts, $token]);
 
     $statement =
-        "SELECT datetime, Frequency, deviceID, strength 
-		FROM chatterboxDB.data D1
-			WHERE datetime = (SELECT MAX(datetime) FROM chatterboxDB.data D2 WHERE D1.deviceID = D2.deviceID)
-			GROUP BY deviceID";
+        "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
+		FROM 'chatterboxDB'.'data' 'D1'
+			WHERE 'datetime' = (SELECT MAX('datetime') FROM 'chatterboxDB'.'data' 'D2' WHERE 'D1'.'deviceID' = 'D2'.'deviceID')
+			GROUP BY 'deviceID'";
     
     $query = $dbConnection->prepare($statement);
     $query->execute();
