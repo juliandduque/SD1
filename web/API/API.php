@@ -98,9 +98,6 @@ function createRecord($dbConnection, $jsonPayload)
  */
 function getLatestRecords($dbConnection, $jsonPayload)
 {
-
-    checkForEmptyProperties([$userID, $numberOfPosts, $token]);
-
     $statement =
         "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
 		FROM 'chatterboxDB'.'data' 'D1'
