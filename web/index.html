@@ -22,7 +22,6 @@
 
 
     <script>
-        //map center
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
         // map options,
         var myOptions = {
@@ -51,44 +50,52 @@
                 valueField: 'count'
             }
         );
-        var testData = {
-            max: 100,
-            data:
-                [{
-                    lat: 28.600540,
-                    lng: -81.197614,
-                    count: 30
-                },
-                {
-                    lat: 28.600691,
-                    lng: -81.197932,
-                    count: 86
-                },
-                {
-                    lat: 28.600691,
-                    lng: -81.197732,
-                    count: 43
+
+        var myVar = setInterval(updateMap, 10000);
+
+        function updateMap() {
+            
+            var testData = {
+                max: 100,
+                data:
+                    [{
+                        lat: 28.600540,
+                        lng: -81.197614,
+                        count: 30
                     },
-                {
-                    lat: 28.600491,
-                    lng: -81.197932,
-                    count: 64
-                },
-                {
-                    lat: 28.600361,
-                    lng: -81.197962,
-                    count: 90
-                },
-                {
-                    lat: 28.600471,
-                    lng: -81.197769,
-                    count: 60
-                }]
-        };
-        google.maps.event.addListenerOnce(map, "idle", function () {
-            // this is important, because if you set the data set too early, the latlng/pixel projection doesn't work
-            heatmap.setData(testData);
-        });
+                    {
+                        lat: 28.600691,
+                        lng: -81.197932,
+                        count: 86
+                    },
+                    {
+                        lat: 28.600691,
+                        lng: -81.197732,
+                        count: 43
+                    },
+                    {
+                        lat: 28.600491,
+                        lng: -81.197932,
+                        count: 64
+                    },
+                    {
+                        lat: 28.600361,
+                        lng: -81.197962,
+                        count: 90
+                    },
+                    {
+                        lat: 28.600471,
+                        lng: -81.197769,
+                        count: 60
+                    }]
+            };
+            google.maps.event.addListenerOnce(map, "idle", function () {
+                // this is important, because if you set the data set too early, the latlng/pixel projection doesn't work
+                heatmap.setData(testData);
+            });
+        }
+        //map center
+        
     </script>
 </body>
 
