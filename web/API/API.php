@@ -91,18 +91,17 @@ function createRecord($dbConnection, $jsonPayload)
  * Get the most relevant posts for a particular user (based on tag likes)
  *
  * @json Payload : 
- * @json Response: (multiple) datetime, frequency, strength, deviceID
+ * @json Response: (multiple) frequency, strength, deviceID
  *
  * @param mysqli $dbConnection MySQL connection instance
  * @param array $jsonPayload Decoded JSON object
  */
 function getLatestRecords($dbConnection, $jsonPayload)
 {
-    $statement =
-        "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
-		FROM 'chatterboxDB'.'data' 'D1'
-			WHERE 'datetime' = (SELECT MAX('datetime') FROM 'chatterboxDB'.'data' 'D2' WHERE 'D1'.'deviceID' = 'D2'.'deviceID')
-			GROUP BY 'deviceID'";
+    $statement = "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
+				  FROM 'chatterboxDB'.'data' 'D1'
+					WHERE 'datetime' = (SELECT MAX('datetime') FROM 'chatterboxDB'.'data' 'D2' WHERE 'D1'.'deviceID' = 'D2'.'deviceID')
+					GROUP BY 'deviceID'";
     
     $query = $dbConnection->prepare($statement);
     $query->execute();
