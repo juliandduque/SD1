@@ -51,7 +51,7 @@
 
         });
 
-       // var myVar = setInterval("updateMap()", 5000);
+        var myVar = setInterval("updateMap()", 5000);
 
         function updateMap() {
 
@@ -107,6 +107,12 @@
             }
             else if (currentZoom === 20) {
                 radius = 100;
+            }
+            else if (currentZoom === 21) {
+                radius = 200;
+            }
+            else if (currentZoom === 22) {
+                radius = 400;
             }
             return radius;
         }
