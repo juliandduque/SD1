@@ -22,27 +22,27 @@
     <script>
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
         var currentZoom = 20;
+        var heatmap;
 
         // map options,
         var myOptions = {
             zoom: 20,
-            radius: getRadius(),
             center: myLatlng
         };
 
         // standard map
         map = new google.maps.Map(document.getElementById("map"), myOptions);
+                
+        updateMap();
 
-        google.maps.event.addListener(map, 'zoom_changed', function ()  {
+        google.maps.event.addListener(map, 'zoom_changed', function () {
 
             currentZoom = map.currentZoom;
 
-            map.radius = getRadius();
-            
+            heatmap.setOptions({ radius: getRadius() });
+
         });
 
-        updateMap();
-        
         var myVar = setInterval("updateMap()", 5000);
 
         function updateMap() {
@@ -69,7 +69,8 @@
 
             heatmap = new google.maps.visualization.HeatmapLayer({
                 data: points,
-                map: map
+                map: map,
+                radius: getRadius()
             });
 
             heatmap.setMap(map);
