@@ -35,32 +35,32 @@
 
         function updateMap() {
 
-            var points = 
-                [   {
-                        location: new google.maps.LatLng(28.600540, -81.197614), weight: 30
-                    },
-                    {
-                        location: new google.maps.LatLng(28.600691, -81.197932), weight: 86
-                    },
-                    {
-                        location: new google.maps.LatLng(28.600691, -81.197732), weight: 43
-                    },
-                    {
-                        location: new google.maps.LatLng(28.600401, -81.197932), weight: 64
-                    },
-                    {
-                        location: new google.maps.LatLng(28.600361, -81.197962), weight: 90
-                    },
-                    {
-                        location: new google.maps.LatLng(28.600471, -81.197769), weight: 60
-                    }]
-            };
+            var points =
+                [{
+                    location: new google.maps.LatLng(28.600540, -81.197614), weight: 30
+                },
+                {
+                    location: new google.maps.LatLng(28.600691, -81.197932), weight: 86
+                },
+                {
+                    location: new google.maps.LatLng(28.600691, -81.197732), weight: 43
+                },
+                {
+                    location: new google.maps.LatLng(28.600401, -81.197932), weight: 64
+                },
+                {
+                    location: new google.maps.LatLng(28.600361, -81.197962), weight: 90
+                },
+                {
+                    location: new google.maps.LatLng(28.600471, -81.197769), weight: 60
+                }];
 
             heatmap = new google.maps.visualization.HeatmapLayer({
                 data: points,
                 map: map
             });
 
+            heatmap.setMap(map);
         }
         //map center
         
