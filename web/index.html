@@ -23,11 +23,15 @@
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
         var currentZoom = 20;
         var heatmap;
+        var points;
+        var markers = [];
+        var specialMarkers = [];
 
         // map options,
         var myOptions = {
             zoom: 20,
-            center: myLatlng
+            center: myLatlng,
+            streetViewControl: false,
         };
 
         // standard map
@@ -55,7 +59,7 @@
 
         function updateMap() {
 
-            var points =
+            points =
                 [{
                     location: new google.maps.LatLng(28.60054, -81.19761), weight: 36
                 },
@@ -74,6 +78,22 @@
                 {
                     location: new google.maps.LatLng(28.60047, -81.19776), weight: 68
                 }];
+
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+            markers = [];
+
+            var length = points.length;
+
+            for (var i = 0; i < length; i++) {
+                var marker = new google.maps.Marker({
+                    position: points[i].location,
+                    label: points[i].weight,
+                    map: map
+                });
+                markers.push(marker);
+            }
 
             heatmap.setOptions({
                 data: points,
