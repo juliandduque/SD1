@@ -32,18 +32,19 @@
 
         // standard map
         map = new google.maps.Map(document.getElementById("map"), myOptions);
-                
+
+        heatmap = new google.maps.visualization.HeatmapLayer({
+            map: map
+        });
         updateMap();
 
         google.maps.event.addListener(map, 'zoom_changed', function () {
 
             currentZoom = map.currentZoom;
 
-            //heatmap.setOptions({ radius: getRadius() });
+            heatmap.setOptions({ radius: getRadius() });
 
-            heatmap.setOptions({ radius: 20});
-
-            console.log(getRadius());
+            //heatmap.setOptions({ radius: 20});
 
         });
 
@@ -71,13 +72,11 @@
                     location: new google.maps.LatLng(28.60047, -81.19776), weight: 68
                 }];
 
-            heatmap = new google.maps.visualization.HeatmapLayer({
+            heatmap.setOptions({
                 data: points,
-                map: map,
                 radius: getRadius()
             });
-
-            heatmap.setMap(map);
+            
         }
 
         function getRadius() {
