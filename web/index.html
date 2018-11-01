@@ -39,7 +39,11 @@
 
             currentZoom = map.currentZoom;
 
-            heatmap.setOptions({ radius: getRadius() });
+            //heatmap.setOptions({ radius: getRadius() });
+
+            heatmap.setOptions({ radius: 20});
+
+            console.log(getRadius());
 
         });
 
