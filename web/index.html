@@ -40,7 +40,7 @@
 
         google.maps.event.addListener(map, 'zoom_changed', function () {
 
-            currentZoom = map.currentZoom;
+            currentZoom = map.getZoom();
 
             heatmap.setOptions({ radius: getRadius() });
 
