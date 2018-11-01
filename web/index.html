@@ -8,8 +8,6 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz6PgSnLIOozaRPMD0KNwdFOfCZJnbXls&libraries=visualization"></script>
     <script type="text/javascript" src="code.js"></script>
-    <script type="text/javascript" src="mapi/heatmap.js"></script>
-    <script type="text/javascript" src="mapi/gmaps-heatmap.js"></script>
     <link href="styles.css" rel="stylesheet">
 </head>
 
@@ -30,71 +28,41 @@
         };
         // standard map
         map = new google.maps.Map(document.getElementById("map"), myOptions);
-        // heatmap layer
-        heatmap = new HeatmapOverlay(map,
-            {
-                // radius should be small ONLY if scaleRadius is true (or small radius is intended)
-                "radius": 100,
-                "maxOpacity": 10,
-                // scales the radius based on map zoom
-                "scaleRadius": false,
-                // if set to false the heatmap uses the global maximum for colorization
-                // if activated: uses the data maximum within the current map boundaries
-                //   (there will always be a red spot with useLocalExtremas true)
-                "useLocalExtrema": false,
-                // which field name in your data represents the latitude - default "lat"
-                latField: 'lat',
-                // which field name in your data represents the longitude - default "lng"
-                lngField: 'lng',
-                // which field name in your data represents the data value - default "value"
-                valueField: 'count'
-            }
-        );
+
+        updateMap();
 
         updateMap();
 
         var myVar = setInterval("updateMap()", 5000);
 
         function updateMap() {
-            
-            var testData = {
-                max: 100,
-                data:
-                    [{
-                        lat: 28.600540,
-                        lng: -81.197614,
-                        count: 30
-                    },
-                    {
-                        lat: 28.600691,
-                        lng: -81.197932,
-                        count: 86
-                    },
-                    {
-                        lat: 28.600691,
-                        lng: -81.197732,
-                        count: 43
-                    },
-                    {
-                        lat: 28.600491,
-                        lng: -81.197932,
-                        count: 64
-                    },
-                    {
-                        lat: 28.600361,
-                        lng: -81.197962,
-                        count: 90
-                    },
-                    {
-                        lat: 28.600471,
-                        lng: -81.197769,
-                        count: 60
-                    }]
-            };
-            google.maps.event.addListenerOnce(map, "idle", function () {
-                // this is important, because if you set the data set too early, the latlng/pixel projection doesn't work
-                heatmap.setData(testData);
+
+            var points =
+                [{
+                    location: new google.maps.LatLng(28.60054, -81.19761), weight: 36
+                },
+                {
+                    location: new google.maps.LatLng(28.60069, -81.19793), weight: 83
+                },
+                {
+                    location: new google.maps.LatLng(28.60069, -81.19773), weight: 41
+                },
+                {
+                    location: new google.maps.LatLng(28.60040, -81.19793), weight: 64
+                },
+                {
+                    location: new google.maps.LatLng(28.60036, -81.19796), weight: 97
+                },
+                {
+                    location: new google.maps.LatLng(28.60047, -81.19776), weight: 68
+                }];
+
+            heatmap = new google.maps.visualization.HeatmapLayer({
+                data: points,
+                map: map
             });
+
+            heatmap.setMap(map);
         }
         //map center
         
