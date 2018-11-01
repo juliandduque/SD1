@@ -21,6 +21,8 @@
 
     <script>
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
+        var currentZoom = 20;
+
         // map options,
         var myOptions = {
             zoom: 20,
@@ -28,14 +30,13 @@
             center: myLatlng
         };
 
-        var currentZoom = 20;
 
         // standard map
         map = new google.maps.Map(document.getElementById("map"), myOptions);
 
         google.maps.event.addListener(map, 'zoom_changed', function ()  {
 
-            currentZoom = map.currentZoom();
+            currentZoom = map.currentZoom;
             // zoom level changed... adjust heatmap layer options!
             heatmap.setOptions({
                 radius: getRadius()
