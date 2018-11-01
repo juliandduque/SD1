@@ -55,7 +55,7 @@
 
         });
 
-        var myVar = setInterval("updateMap()", 5000);
+        var myVar = setInterval("updateMap()", 1000);
 
         function updateMap() {
 
@@ -89,7 +89,7 @@
             for (var i = 0; i < length; i++) {
                 var marker = new google.maps.Marker({
                     position: points[i].location,
-                    label: points[i].weight,
+                    label: "" + points[i].weight,
                     map: map
                 });
                 markers.push(marker);
