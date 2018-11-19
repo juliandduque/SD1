@@ -59,6 +59,7 @@ function createRecord($dbConnection, $jsonPayload)
 
 	foreach($array as $value)
 	{
+file_put_contents("php://stderr", "Frequency being added:".$value['frequency'].PHP_EOL);
 		// Get the username and password from the JSON payload
 		$frequency = $value['frequency'];
 		$deviceID = $value['deviceID'];
