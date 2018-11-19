@@ -54,37 +54,45 @@ function callVariableFunction($dbConnection, $jsonPayload)
  */
 function createRecord($dbConnection, $jsonPayload)
 {
-    // Get the username and password from the JSON payload
-    $frequency = $jsonPayload['frequency'];
-    $deviceID = $jsonPayload['deviceID'];
-	$strength = $jsonPayload['strength'];
-	$time = date("Y-m-d h:i:sa");
+	$array = $jsonPayload['array'];
+	$query;
 
-    // Check for various error-inducing situations
-    if (strlen($deviceID) > 45) {
-        returnError('deviceID cannot exceed 45 characterrs.');
-    } else if (strlen($frequency) <= 0) {
-        returnError('frequency cannot be empty.');
-    } else if (strlen($deviceID) <= 0) {
-        returnError('deviceID cannot be empty.');
-    } else {
-  // This block uses prepared statements and parameterized queries to protect against SQL injection
-        // MySQL query to add the username and password into the database
-        $query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `strength`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '".$strength."')");
-        $query->execute();
+	foreach($array as $value)
+	{
+		// Get the username and password from the JSON payload
+		$frequency = $value['frequency'];
+		$deviceID = $value['deviceID'];
+		$strength = $value['strength'];
+		$time = date("Y-m-d h:i:sa");
+
+		// Check for various error-inducing situations
+		if (strlen($deviceID) > 45) {
+			returnError('deviceID cannot exceed 45 characterrs.');
+		} else if (strlen($frequency) <= 0) {
+			returnError('frequency cannot be empty.');
+		} else if (strlen($deviceID) <= 0) {
+			returnError('deviceID cannot be empty.');
+		} else {
+			// This block uses prepared statements and parameterized queries to protect against SQL injection
+			// MySQL query to add the username and password into the database
+			$query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `strength`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '".$strength."')");
+
 		
-        // Result from the query
-        $result = $query->get_result();
+			// Result from the query
+			$result = $query->get_result();
 
-        // Check to see if the insertion was successful...
-        if ($result) {
-            // If successful, return JSON success response
-            returnSuccess('Record created.');
-        } else {
-            // If not successful, return JSON error response
-            returnError($dbConnection->error);
-        }
-    }
+			// Check to see if the insertion was successful...
+			if ($result) {
+				// If successful, return JSON success response
+				returnSuccess('Record created.');
+			} else {
+				// If not successful, return JSON error response
+				returnError($dbConnection->error);
+			}
+		}
+	}
+
+	$query->execute();    
 }
 
 /**
