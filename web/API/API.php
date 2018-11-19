@@ -59,7 +59,7 @@ function createRecord($dbConnection, $jsonPayload)
 
 	foreach($array as $value)
 	{
-file_put_contents("php://stderr", "Frequency being added:".$value['frequency'].PHP_EOL);
+		//file_put_contents("php://stderr", "Frequency being added:".$value['frequency'].PHP_EOL);
 		// Get the username and password from the JSON payload
 		$frequency = $value['frequency'];
 		$deviceID = $value['deviceID'];
@@ -78,22 +78,22 @@ file_put_contents("php://stderr", "Frequency being added:".$value['frequency'].P
 			// MySQL query to add the username and password into the database
 			$query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `strength`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '".$strength."')");
 
-		
-			// Result from the query
-			$result = $query->get_result();
-
-			// Check to see if the insertion was successful...
-			if ($result) {
-				// If successful, return JSON success response
-				returnSuccess('Record created.');
-			} else {
-				// If not successful, return JSON error response
-				returnError($dbConnection->error);
-			}
 		}
 	}
 
 	$query->execute();    
+		
+	 // Result from the query
+	$result = $query->get_result();
+
+	// Check to see if the insertion was successful...
+	if ($result) {
+		// If successful, return JSON success response
+		returnSuccess('Record created.');
+	} else {
+		// If not successful, return JSON error response
+		returnError($dbConnection->error);
+	}
 }
 
 /**
