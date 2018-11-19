@@ -105,8 +105,7 @@ function getLatestRecords($dbConnection, $jsonPayload)
 
 	$statement = "SELECT datetime, Frequency, deviceID, strength 
 					FROM chatterboxDB.data D1
-						WHERE datetime = (SELECT MAX(datetime) FROM chatterboxDB.data D2 WHERE D1.deviceID = D2.deviceID)
-						GROUP BY deviceID";
+						WHERE datetime = (SELECT MAX(datetime) FROM chatterboxDB.data D2 WHERE D1.deviceID + D1.Frequency = D2.deviceID + D2.Frequency)";
     
     $query = $dbConnection->prepare($statement);
     $query->execute();
