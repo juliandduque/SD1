@@ -48,8 +48,6 @@
 
             heatmap.setOptions({ radius: getRadius() });
 
-            //heatmap.setOptions({ radius: 20});
-
             console.log(currentZoom);
 
 
@@ -59,25 +57,35 @@
 
         function updateMap() {
 
-            points =
-                [{
-                    location: new google.maps.LatLng(28.60054, -81.19761), weight: 36
-                },
-                {
-                    location: new google.maps.LatLng(28.60069, -81.19793), weight: 83
-                },
-                {
-                    location: new google.maps.LatLng(28.60069, -81.19773), weight: 41
-                },
-                {
-                    location: new google.maps.LatLng(28.60040, -81.19793), weight: 64
-                },
-                {
-                    location: new google.maps.LatLng(28.60036, -81.19796), weight: 97
-                },
-                {
-                    location: new google.maps.LatLng(28.60047, -81.19776), weight: 68
-                }];
+            var jsonPayload =
+            {
+                    function: "getLatestRecords"
+            };
+            jsonPayload = JSON.stringify(jsonPayload);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", API, true);
+            xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+            try {
+                xhr.onreadystatechange = function () {
+
+                    if (this.readyState === 4 && this.status === 200) {
+                        var jsonObject = JSON.parse(xhr.responseText);
+
+                       console.log(jsonObject);
+
+                        if (jsonObject.success) {
+                            
+                        }
+                    }
+                };
+                xhr.send(jsonPayload);
+
+            } catch (err) {
+                console.log(err);
+                alert("Error when reading posts, please try again later");
+            }
 
             for (var i = 0; i < markers.length; i++) {
                 markers[i].setMap(null);
