@@ -13,7 +13,13 @@
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="col-sm-2"><a class="navbar-brand mt-0" href="#">CB<hr class="mx-0 my-0"> <span style="font-size: 12px">Chatterbox</span> </a></div>
+        <div class="col-sm-10"><a class="navbar-brand mt-0" href="#">CB<hr class="mx-0 my-0"> <span style="font-size: 12px">Chatterbox</span> </a></div>
+        <div class="col-sm-4"><a class="navbar-brand mt-0" href="#">Frequency:
+        <hr class="mx-0 my-0">
+            <input id="freqInput" oninput='onInput()' list="freqList" value="900" class="col-sm-6 custom-select custom-select-sm">
+            <datalist id="freqList">
+            </datalist>
+        </a></div>
     </nav>
 
     <div id="map"></div>
@@ -40,9 +46,13 @@
         // standard map
         map = new google.maps.Map(document.getElementById("map"), myOptions);
 
+
         heatmap = new google.maps.visualization.HeatmapLayer({
             map: map
-        });
+        }); 
+
+
+        var myVar = setInterval("updateMap()", 5000);
 
         google.maps.event.addListener(map, 'zoom_changed', function () {
 
@@ -53,16 +63,45 @@
             console.log(currentZoom);
 
         });
+               
 
-        sleep(50000000);
-        
+        var jsonPayload =
+        {
+            function: "getFrequencies"
+        };
+        jsonPayload = JSON.stringify(jsonPayload);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", API, true);
+        xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+        try {
+            xhr.onreadystatechange = function () {
+
+                if (this.readyState === 4 && this.status === 200) {
+                    var jsonObject = JSON.parse(xhr.responseText);
+
+                    console.log(jsonObject);
+
+                    if (jsonObject.success) {
+                        var results = jsonObject.results;
+                        var options = '';
+                        for (var i = 0; i < results.length; i++) {
+                            options += '<option value="' + results[i].Frequency + '" />';
+                        }
+                        document.getElementById('freqList').innerHTML = options;
+                    }
+                }
+            };
+            xhr.send(jsonPayload);
+
+        } catch (err) {
+            console.log(err);
+            alert("Error when reading frequencies, please try again later");
+        }
+
         updateMap();
 
-        var myVar = setInterval("updateMap()", 10000);
-
-        function sleep(time) {
-            return new Promise((resolve) => setTimeout(resolve, time));
-        }
         function updateMap() {
 
             var jsonPayload =
@@ -94,7 +133,7 @@
                                 if (payload[i].deviceID == "000001") loc = new google.maps.LatLng(28.600417, -81.197548);
                                 else if (payload[i].deviceID == "000002") loc = new google.maps.LatLng(28.600476, -81.198197); 
 
-                                points.push({ location: loc, weight: payload[i].strength });
+                                points.push({ location: loc, weight: Math.floor( payload[i].strength) });
                             }
                         }
                     }
@@ -103,7 +142,7 @@
 
             } catch (err) {
                 console.log(err);
-                alert("Error when reading posts, please try again later");
+                alert("No record for this frequency");
             }
 
             for (var i = 0; i < markers.length; i++) {
@@ -124,9 +163,16 @@
 
             heatmap.setOptions({
                 data: points,
+                maxIntensity: 100,
                 radius: getRadius()
             });
             
+        }
+
+        function onInput() {
+            var val = document.getElementById("freqInput").value;
+            currentFreq = val;
+            updateMap();
         }
 
         function getRadius() {
