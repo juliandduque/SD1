@@ -83,7 +83,7 @@ function createRecord($dbConnection, $jsonPayload)
 			file_put_contents("php://stderr", "Record created Frequency:".$frequency." Strength:".$strength." deviceID:".$deviceID.PHP_EOL);
 		}
 	}
-	returnSucces('Records created');
+	returnSuccess('Records created');
 }
 
 /**
