@@ -80,16 +80,10 @@ function createRecord($dbConnection, $jsonPayload)
 			 // Result from the query
 			$result = $query->get_result();
 
-			// Check to see if the insertion was successful...
-			if ($result) {
-				// If successful, return JSON success response
-				//file_put_contents("php://stderr", "Record created. Frequency:".$frequency." Strength:".$strength." Device:".$deviceID.PHP_EOL);
-			} else {
-				// If not successful, return JSON error response
-				returnError($dbConnection->error);
-			}
+			file_put_contents("php://stderr", "Record created Frequency:".$frequency." Strength:".$strength." deviceID:".$deviceID.PHP_EOL);
 		}
 	}
+	returnSucces('Records created');
 }
 
 /**
