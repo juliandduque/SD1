@@ -23,8 +23,9 @@
         const API = "API/API.php";
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
         var currentZoom = 20;
+        var currentFreq = 900;
         var heatmap;
-        var points;
+        var points = [];
         var markers = [];
         var specialMarkers = [];
 
@@ -60,7 +61,8 @@
 
             var jsonPayload =
             {
-                    function: "getLatestRecords"
+                    function: "getLatestRecords",
+                    Frequency: currentFreq
             };
             jsonPayload = JSON.stringify(jsonPayload);
 
@@ -76,8 +78,18 @@
 
                        console.log(jsonObject);
 
-                        if (jsonObject.success) {
-                            
+                        if (jsonObject.success)
+                        {
+                            var payload = jsonObject.results;
+                            points = [];
+                            for (var i = 0; i < payload.length; i++)
+                            {   
+                                var loc;
+                                if (payload[i].deviceID == "000001") loc = new google.maps.LatLng(28.600417, -81.197548);
+                                else if (payload[i].deviceID == "000002") loc = new google.maps.LatLng(28.600476, -81.198197); 
+
+                                points.push({ location: loc, weight: payload[i].strength });
+                            }
                         }
                     }
                 };
