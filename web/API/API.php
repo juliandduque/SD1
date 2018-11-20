@@ -132,3 +132,30 @@ function getLatestRecords($dbConnection, $jsonPayload)
     }
     returnSuccess('Post(s) found.', $postResults);
 }
+
+function getFrequencies($dbConnection, $jsonPayload)
+{
+
+	$statement = "SELECT DISTINCT Frequency
+					FROM chatterboxDB.data D1
+					order by Frequency;";
+    
+    $query = $dbConnection->prepare($statement);
+    $query->execute();
+    $result = $query->get_result();
+    $query->close();
+    // Verify post(s) were found
+    if ($result->num_rows <= 0) {
+        returnError('No posts found: ' . $dbConnection->error);
+    }
+    $postResults = [];
+    // NOTE: $userID is the ID of the actual user fetching the posts
+    //       $row['userID'] is the ID of each user that created the post(s) being fetched
+    while ($row = $result->fetch_assoc()) {
+        $recordInformation = [
+            'Frequency'   => $row['Frequency'],
+        ];
+        $postResults[] = $recordInformation;
+    }
+    returnSuccess('Post(s) found.', $postResults);
+}
