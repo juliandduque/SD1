@@ -97,14 +97,19 @@ function createRecord($dbConnection, $jsonPayload)
  */
 function getLatestRecords($dbConnection, $jsonPayload)
 {
+	$frequency = $jsonPayload['Frequency'];
     /*$statement = "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
 				  FROM 'chatterboxDB'.'data' 'D1'
 					WHERE 'datetime' = (SELECT MAX('datetime') FROM 'chatterboxDB'.'data' 'D2' WHERE 'D1'.'deviceID' = 'D2'.'deviceID')
 					GROUP BY 'deviceID'";*/
 
-	$statement = "SELECT datetime, Frequency, deviceID, strength 
-					FROM chatterboxDB.data D1
-						WHERE datetime = (SELECT MAX(datetime) FROM chatterboxDB.data D2 WHERE D1.deviceID + D1.Frequency = D2.deviceID + D2.Frequency)";
+	$statement = "SELECT * 
+				  FROM (SELECT * FROM chatterboxDB.data WHERE Frequency = ".$frequency. ") A
+			      INNER JOIN (SELECT max(datetime) mv, deviceID 
+								FROM (SELECT * FROM chatterboxDB.data WHERE Frequency = ".$frequency. ") C
+								GROUP BY deviceID) B
+				  ON A.deviceID= B.deviceID
+				  AND A.datetime = B.mv;";
     
     $query = $dbConnection->prepare($statement);
     $query->execute();
