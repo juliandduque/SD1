@@ -77,23 +77,23 @@ function createRecord($dbConnection, $jsonPayload)
 			// This block uses prepared statements and parameterized queries to protect against SQL injection
 			// MySQL query to add the username and password into the database
 			$query = $dbConnection->prepare("INSERT INTO `chatterboxDB`.`data` (`datetime`, `Frequency`, `deviceID`, `strength`) VALUES ('".$time."', '".$frequency."', '".$deviceID."', '".$strength."')");
+			$query->execute();    
+		
+			 // Result from the query
+			$result = $query->get_result();
 
+			// Check to see if the insertion was successful...
+			if ($result) {
+				// If successful, return JSON success response
+				returnSuccess('Record created.');
+			} else {
+				// If not successful, return JSON error response
+				returnError($dbConnection->error);
+			}
 		}
 	}
 
-	$query->execute();    
-		
-	 // Result from the query
-	$result = $query->get_result();
-
-	// Check to see if the insertion was successful...
-	if ($result) {
-		// If successful, return JSON success response
-		returnSuccess('Record created.');
-	} else {
-		// If not successful, return JSON error response
-		returnError($dbConnection->error);
-	}
+	
 }
 
 /**
