@@ -14,9 +14,9 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="col-sm-10"><a class="navbar-brand mt-0" href="#">CB<hr class="mx-0 my-0"> <span style="font-size: 12px">Chatterbox</span> </a></div>
-        <div class="col-sm-4"><a class="navbar-brand mt-0" href="#">Frequency:
+        <div class="col-sm-2"><a class="navbar-brand mt-0" href="#">Frequency:
         <hr class="mx-0 my-0">
-            <input id="freqInput" oninput='onInput()' list="freqList" value="900" class="col-sm-6 custom-select custom-select-sm">
+            <input id="freqInput" oninput='onInput()' list="freqList" value="2400" class="col-sm-6 custom-select custom-select-sm">
             <datalist id="freqList">
             </datalist>
         </a></div>
@@ -29,7 +29,8 @@
         const API = "http://chatt3rb0x.herokuapp.com/API/API.php";
         var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
         var currentZoom = 20;
-        var currentFreq = 900;
+        var currentFreq = 2400;
+        var frequencies = [];
         var heatmap;
         var points = [];
         var markers = [];
@@ -52,7 +53,7 @@
         }); 
 
 
-        var myVar = setInterval("updateMap()", 5000);
+        var myVar = setInterval("updateMap()", 3000);
 
         google.maps.event.addListener(map, 'zoom_changed', function () {
 
@@ -88,6 +89,7 @@
                         var options = '';
                         for (var i = 0; i < results.length; i++) {
                             options += '<option value="' + results[i].Frequency + '" />';
+                            frequencies.push(results[i].Frequency);
                         }
                         document.getElementById('freqList').innerHTML = options;
                     }
@@ -125,6 +127,8 @@
 
                         if (jsonObject.success)
                         {
+                            originalRadius = Math.floor(Math.pow(10, ((80 - 32.44 - 20 * Math.log10(currentFreq)) / 20)) * 1000);
+                            console.log(originalRadius);
                             var payload = jsonObject.results;
                             points = [];
                             for (var i = 0; i < payload.length; i++)
@@ -172,10 +176,8 @@
         function onInput() {
             var val = document.getElementById("freqInput").value;
             currentFreq = val;
-            updateMap();
         }
-
-        function getRadius() {
+         function getRadius() {
             var radius;
             if (currentZoom < 14) {
                 radius = originalRadius/128;
