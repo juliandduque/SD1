@@ -159,3 +159,38 @@ function getFrequencies($dbConnection, $jsonPayload)
     }
     returnSuccess('Post(s) found.', $postResults);
 }
+
+function getSinglePointRecords($dbConnection, $jsonPayload)
+{
+	$frequency = $jsonPayload['Frequency'];
+	$deviceID = $jsonPayload['deviceID'];
+    /*$statement = "SELECT 'datetime', 'Frequency', 'deviceID', 'strength'
+				  FROM 'chatterboxDB'.'data' 'D1'
+					WHERE 'datetime' = (SELECT MAX('datetime') FROM 'chatterboxDB'.'data' 'D2' WHERE 'D1'.'deviceID' = 'D2'.'deviceID')
+					GROUP BY 'deviceID'";*/
+
+	$statement = "SELECT * 
+					FROM chatterboxDB.data D1
+					WHERE D1.deviceID = ".$deviceID." AND D1.Frequency = ".$frequency.";";
+    
+    $query = $dbConnection->prepare($statement);
+    $query->execute();
+    $result = $query->get_result();
+    $query->close();
+    // Verify post(s) were found
+    if ($result->num_rows <= 0) {
+        returnError('No posts found: ' . $dbConnection->error);
+    }
+    $postResults = [];
+    // NOTE: $userID is the ID of the actual user fetching the posts
+    //       $row['userID'] is the ID of each user that created the post(s) being fetched
+    while ($row = $result->fetch_assoc()) {
+        $recordInformation = [
+            'Frequency'   => $row['Frequency'],
+            'strength'   => $row['strength'],
+            'deviceID' => $row['deviceID']
+        ];
+        $postResults[] = $recordInformation;
+    }
+    returnSuccess('Post(s) found.', $postResults);
+}
