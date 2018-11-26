@@ -160,7 +160,7 @@ function getFrequencies($dbConnection, $jsonPayload)
     returnSuccess('Post(s) found.', $postResults);
 }
 
-function getSinglePointRecords($dbConnection, $jsonPayload)
+function getSomeRecords($dbConnection, $jsonPayload)
 {
 	$frequency = $jsonPayload['Frequency'];
 	$deviceID = $jsonPayload['deviceID'];
