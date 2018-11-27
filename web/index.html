@@ -8,139 +8,131 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCz6PgSnLIOozaRPMD0KNwdFOfCZJnbXls&libraries=visualization"></script>
     <script type="text/javascript" src="code.js"></script>
+    <script type="text/javascript" src="Chart.js"></script>
     <link href="styles.css" rel="stylesheet">
 </head>
 
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="col-sm-10"><a class="navbar-brand mt-0" href="#">CB<hr class="mx-0 my-0"> <span style="font-size: 12px">Chatterbox</span> </a></div>
-        <div class="col-sm-2"><a class="navbar-brand mt-0" href="#">Frequency:
-        <hr class="mx-0 my-0">
-            <input id="freqInput" oninput='onInput()' list="freqList" value="2400" class="col-sm-6 custom-select custom-select-sm">
-            <datalist id="freqList">
-            </datalist>
-        </a></div>
+        <div class="col-sm-8"><a class="navbar-brand mt-0" href="#">CB<hr class="mx-0 my-0"> <span style="font-size: 12px">Chatterbox</span> </a></div>
+        <div class="col-sm-4">
+            <div class="col-sm-12">
+                <a class="navbar-brand mt-0" href="#">
+                    Frequency:
+                    <hr class="mx-0 my-0">
+                    <input id="freqInput" oninput='onInput()' list="freqList" value="2400" class="custom-select custom-select-sm">
+                    <datalist id="freqList"></datalist>
+                </a><button type="button" class="btn btn-danger" id="byeMarkers" onclick="clearTags()"><i class="fas fa-sign-out-alt "></i>Clear Markers</button>
+            </div>
+       </div>
     </nav>
+    <div class="container">
+        <!-- The Modal -->
+        <div class="modal fade" id="chartModal" onh>
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Measured Values Over Time</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+                                <form>
+                                    <div class="form-row my-form">
+                                        <div class="form-group col-md-12">
+                                            <canvas id="myChart" width="700" height="400"></canvas>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="map"></div>
 
-    <div id="map"></div>
+
+        <script>
+            const API = "http://chatt3rb0x.herokuapp.com/API/API.php";
+            var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
+            var currentZoom = 20;
+            var currentFreq = 2400;
+            var frequencies = [];
+            var heatmap;
+            var points = [];
+            var markers = [];
+            var specialMarkers = [];
+            var originalRadius = 100;
+            var deviceID;
+
+            // map options,
+            var myOptions = {
+                zoom: 20,
+                center: myLatlng,
+                streetViewControl: false,
+            };
+
+            // standard map
+            map = new google.maps.Map(document.getElementById("map"), myOptions);
 
 
-    <script>
-        const API = "http://chatt3rb0x.herokuapp.com/API/API.php";
-        var myLatlng = new google.maps.LatLng(28.600540, -81.197614);
-        var currentZoom = 20;
-        var currentFreq = 2400;
-        var frequencies = [];
-        var heatmap;
-        var points = [];
-        var markers = [];
-        var specialMarkers = [];
-        var originalRadius = 100;
-
-        // map options,
-        var myOptions = {
-            zoom: 20,
-            center: myLatlng,
-            streetViewControl: false,
-        };
-
-        // standard map
-        map = new google.maps.Map(document.getElementById("map"), myOptions);
-
-
-        heatmap = new google.maps.visualization.HeatmapLayer({
-            map: map
-        }); 
-
-        google.maps.event.addListener(map, 'click', function (event) {
-            addMarker(event.latLng, map);
-        });
-
-        function addMarker(location, map) {
-            var label = 0;
-            var count = 0;
-            for (var i = 0; i < points.length; i++) {
-                var distance = getDistance(location, points[i].location);
-                var loss = Math.pow(((4 * 3.1415 * distance * currentFreq * 1000) / (2.998 * Math.pow(10, 8))), 2) ;
-                var ratio = 1 - loss;
-                if (ratio > 0) {
-                    label += points[i].weight * ratio;
-                    count++;
-                }
-            }
-            if (count == 0) count++;
-            label = Math.floor((label / count));
-            //console.log(label);
-
-            var marker = new google.maps.Marker({
-                position: location,
-                label: label + "",
-                animation: google.maps.Animation.DROP,
+            heatmap = new google.maps.visualization.HeatmapLayer({
                 map: map
             });
 
-            specialMarkers.push(marker);
-        }
+            google.maps.event.addListener(map, 'click', function (event) {
+                addMarker(event.latLng, map);
+            });
 
-
-        var myVar = setInterval("updateMap()", 3000);
-
-        google.maps.event.addListener(map, 'zoom_changed', function () {
-
-            currentZoom = map.getZoom();
-
-            heatmap.setOptions({ radius: getRadius() });
-
-            console.log(currentZoom);
-
-        });
-               
-
-        var jsonPayload =
-        {
-            function: "getFrequencies"
-        };
-        jsonPayload = JSON.stringify(jsonPayload);
-
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", API, true);
-        xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
-
-        try {
-            xhr.onreadystatechange = function () {
-
-                if (this.readyState === 4 && this.status === 200) {
-                    var jsonObject = JSON.parse(xhr.responseText);
-
-                    console.log(jsonObject);
-
-                    if (jsonObject.success) {
-                        var results = jsonObject.results;
-                        var options = '';
-                        for (var i = 0; i < results.length; i++) {
-                            options += '<option value="' + results[i].Frequency + '" />';
-                            frequencies.push(results[i].Frequency);
-                        }
-                        document.getElementById('freqList').innerHTML = options;
+            function addMarker(location, map) {
+                var label = 0;
+                var count = 0;
+                for (var i = 0; i < points.length; i++) {
+                    var distance = getDistance(location, points[i].location);
+                    var loss = Math.pow(((4 * 3.1415 * distance * currentFreq * 1000) / (2.998 * Math.pow(10, 8))), 2);
+                    var ratio = 1 - loss;
+                    if (ratio > 0) {
+                        label += points[i].weight * ratio;
+                        count++;
                     }
                 }
-            };
-            xhr.send(jsonPayload);
+                if (count == 0) count++;
+                label = Math.floor((label / count));
+                //console.log(label);
 
-        } catch (err) {
-            console.log(err);
-            alert("Error when reading frequencies, please try again later");
-        }
+                var marker = new google.maps.Marker({
+                    position: location,
+                    label: label + "",
+                    animation: google.maps.Animation.DROP,
+                    map: map
+                });
 
-        updateMap();
+                specialMarkers.push(marker);
+            }
 
-        function updateMap() {
+
+            var myVar = setInterval("updateMap()", 3000);
+
+            google.maps.event.addListener(map, 'zoom_changed', function () {
+
+                currentZoom = map.getZoom();
+
+                heatmap.setOptions({ radius: getRadius() });
+
+                console.log(currentZoom);
+
+            });
+
 
             var jsonPayload =
-            {
-                    function: "getLatestRecords",
-                    Frequency: currentFreq
-            };
+                {
+                    function: "getFrequencies"
+                };
             jsonPayload = JSON.stringify(jsonPayload);
 
             var xhr = new XMLHttpRequest();
@@ -153,22 +145,16 @@
                     if (this.readyState === 4 && this.status === 200) {
                         var jsonObject = JSON.parse(xhr.responseText);
 
-                       console.log(jsonObject);
+                        console.log(jsonObject);
 
-                        if (jsonObject.success)
-                        {
-                            originalRadius = Math.floor(Math.pow(10, ((80 - 32.44 - 20 * Math.log10(currentFreq)) / 20)) * 1000);
-                            console.log(originalRadius);
-                            var payload = jsonObject.results;
-                            points = [];
-                            for (var i = 0; i < payload.length; i++)
-                            {   
-                                var loc;
-                                if (payload[i].deviceID == "000001") loc = new google.maps.LatLng(28.600417, -81.197548);
-                                else if (payload[i].deviceID == "000002") loc = new google.maps.LatLng(28.600476, -81.198197); 
-
-                                points.push({ location: loc, weight: Math.floor( payload[i].strength) });
+                        if (jsonObject.success) {
+                            var results = jsonObject.results;
+                            var options = '';
+                            for (var i = 0; i < results.length; i++) {
+                                options += '<option value="' + results[i].Frequency + '" />';
+                                frequencies.push(results[i].Frequency);
                             }
+                            document.getElementById('freqList').innerHTML = options;
                         }
                     }
                 };
@@ -176,107 +162,246 @@
 
             } catch (err) {
                 console.log(err);
-                alert("No record for this frequency");
+                alert("Error when reading frequencies, please try again later");
             }
 
-            for (var i = 0; i < markers.length; i++) {
-                markers[i].setMap(null);
-            }
-            markers = [];
-            
-            var length = points.length;
+            updateMap();
 
-            for (var i = 0; i < length; i++) {
-                var marker = new google.maps.Marker({
-                    position: points[i].location,
-                    label: "" + points[i].weight,
-                    map: map
-                });
-                markers.push(marker);
-            }
+            function updateMap() {
 
-            for (var i = 0; i < specialMarkers.length; i++)
-            {
-                var label = 0;
-                var count = 0;
-                for (var j = 0; j < points.length; j++) {
-                    var distance = getDistance(specialMarkers[i].position, points[j].location);
-                    var loss = Math.pow(((4 * 3.1415 * distance * currentFreq * 1000) / (2.998 * Math.pow(10, 8))), 2);
-                    var ratio = 1 - loss;
-                    if (ratio > 0) {
-                        label += points[j].weight * ratio;
-                        count++;
-                    }
+                var jsonPayload =
+                    {
+                        function: "getLatestRecords",
+                        Frequency: currentFreq
+                    };
+                jsonPayload = JSON.stringify(jsonPayload);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", API, true);
+                xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+                try {
+                    xhr.onreadystatechange = function () {
+
+                        if (this.readyState === 4 && this.status === 200) {
+                            var jsonObject = JSON.parse(xhr.responseText);
+
+                            console.log(jsonObject);
+
+                            if (jsonObject.success) {
+                                originalRadius = Math.floor(Math.pow(10, ((80 - 32.44 - 20 * Math.log10(currentFreq)) / 20)) * 1000);
+                                console.log(originalRadius);
+                                var payload = jsonObject.results;
+                                points = [];
+                                for (var i = 0; i < payload.length; i++) {
+                                    var loc;
+                                    if (payload[i].deviceID == "000001") {
+                                        loc = new google.maps.LatLng(28.600355, -81.197532);
+                                    }
+                                    else if (payload[i].deviceID == "000002") {
+                                        loc = new google.maps.LatLng(28.600476, -81.198097);
+                                    }
+
+                                    points.push({ location: loc, weight: Math.floor(payload[i].strength), deviceID: payload[i].deviceID });
+                                }
+                            }
+                        }
+                    };
+                    xhr.send(jsonPayload);
+
+                } catch (err) {
+                    console.log(err);
+                    alert("No record for this frequency");
                 }
-                if (count == 0) count++;
-                label = Math.floor((label / count));
-                specialMarkers[i].setLabel(label + "");
+
+                for (var i = 0; i < markers.length; i++) {
+                    markers[i].setMap(null);
+                }
+                markers = [];
+
+                var length = points.length;
+
+                for (var i = 0; i < length; i++) {
+                    var deviceid = points[i].deviceID;
+                    var marker = new google.maps.Marker({
+                        position: points[i].location,
+                        label: "" + points[i].weight,
+                        deviceID: deviceid,
+                        map: map
+                    });
+                    google.maps.event.addListener(marker, 'click', (function (deviceid) {
+                        return function () {
+                            var jsonPayload =
+                                {
+                                    function: "getSomeRecords",
+                                    Frequency: currentFreq,
+                                    deviceID: deviceid + ""
+                                };
+                            jsonPayload = JSON.stringify(jsonPayload);
+
+                            var xhr = new XMLHttpRequest();
+                            xhr.open("POST", API, true);
+                            xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+
+                            try {
+                                xhr.onreadystatechange = function () {
+
+                                    if (this.readyState === 4 && this.status === 200) {
+                                        var jsonObject = JSON.parse(xhr.responseText);
+
+                                        console.log(jsonObject);
+                                        if (jsonObject.success) {
+                                            var results = jsonObject.results;
+                                            var labels = results.map(function (e) {
+                                                return e.datetime;
+                                            });
+                                            var data = results.map(function (e) {
+                                                return e.strength;
+                                            });;
+                                            var ctx = document.getElementById("myChart").getContext('2d');
+                                            var myChart = new Chart(ctx, {
+                                                type: 'line',
+                                                data: {
+                                                    labels: labels,
+                                                    datasets: [{
+                                                        label: 'Measured Values Over Time',
+                                                        data: data,
+                                                        backgroundColor: [
+                                                            'rgba(255, 99, 132, 0.2)',
+                                                            'rgba(54, 162, 235, 0.2)',
+                                                            'rgba(255, 206, 86, 0.2)',
+                                                            'rgba(75, 192, 192, 0.2)',
+                                                            'rgba(153, 102, 255, 0.2)',
+                                                            'rgba(255, 159, 64, 0.2)'
+                                                        ],
+                                                        borderColor: [
+                                                            'rgba(255,99,132,1)',
+                                                            'rgba(54, 162, 235, 1)',
+                                                            'rgba(255, 206, 86, 1)',
+                                                            'rgba(75, 192, 192, 1)',
+                                                            'rgba(153, 102, 255, 1)',
+                                                            'rgba(255, 159, 64, 1)'
+                                                        ],
+                                                        borderWidth: 1
+                                                    }]
+                                                },
+                                                options: {
+                                                    responsive: false,
+                                                    legend: {
+                                                        display: false,
+                                                        position: 'right',
+                                                        onClick: null
+                                                    },
+                                                }
+                                            });
+                                        }
+                                    }
+                                };
+                                xhr.send(jsonPayload);
+
+                                $('#chartModal').modal({
+                                    show: true
+                                }); 
+
+                            } catch (err) {
+                                console.log(err);
+                                alert("No record for this frequency");
+                            }
+                        }
+                    })(deviceid));
+
+                    markers.push(marker);
+                }
+
+                heatmap.setOptions({
+                    data: points,
+                    maxIntensity: 100,
+                    radius: getRadius()
+                });
+
+
+                for (var i = 0; i < specialMarkers.length; i++) {
+                    var label = 0;
+                    var count = 0;
+                    for (var j = 0; j < points.length; j++) {
+                        var distance = getDistance(specialMarkers[i].position, points[j].location);
+                        var loss = Math.pow(((4 * 3.1415 * distance * currentFreq * 1000) / (2.998 * Math.pow(10, 8))), 2);
+                        var ratio = 1 - loss;
+                        if (ratio > 0) {
+                            label += points[j].weight * ratio;
+                            count++;
+                        }
+                    }
+                    if (count == 0) count++;
+                    label = Math.floor((label / count));
+                    specialMarkers[i].setLabel(label + "");
+                }
             }
 
-            heatmap.setOptions({
-                data: points,
-                maxIntensity: 100,
-                radius: getRadius()
-            });
-            
-        }
+            function clearTags() {
+                for (var i = 0; i < specialMarkers.length; i++) {
+                    specialMarkers[i].setMap(null);
+                }
+                specialMarkers = [];
+            }
 
-        function onInput() {
-            var val = document.getElementById("freqInput").value;
-            currentFreq = val;
-        }
-         function getRadius() {
-            var radius;
-            if (currentZoom < 14) {
-                radius = originalRadius/128;
+            function onInput() {
+                var val = document.getElementById("freqInput").value;
+                currentFreq = val;
             }
-            else if (currentZoom === 14) {
-                radius = originalRadius/64;
-            }
-            else if (currentZoom === 15) {
-                radius = originalRadius/32;
-            }
-            else if (currentZoom === 16) {
-                radius = originalRadius/16;
-            }
-            else if (currentZoom === 17) {
-                radius = originalRadius/8;
-            }
-            else if (currentZoom === 18) {
-                radius = originalRadius/4;
-            }
-            else if (currentZoom === 19) {
-                radius = originalRadius/2;
-            }
-            else if (currentZoom === 20) {
-                radius = originalRadius;
-            }
-            else if (currentZoom === 21) {
-                radius = originalRadius*2;
-            }
-            else if (currentZoom === 22) {
-                radius = originalRadius*4;
-            }
-            return radius;
-        }
 
-        var rad = function (x) {
-            return x * Math.PI / 180;
-        };
+            function getRadius() {
+                var radius;
+                if (currentZoom < 14) {
+                    radius = originalRadius / 128;
+                }
+                else if (currentZoom === 14) {
+                    radius = originalRadius / 64;
+                }
+                else if (currentZoom === 15) {
+                    radius = originalRadius / 32;
+                }
+                else if (currentZoom === 16) {
+                    radius = originalRadius / 16;
+                }
+                else if (currentZoom === 17) {
+                    radius = originalRadius / 8;
+                }
+                else if (currentZoom === 18) {
+                    radius = originalRadius / 4;
+                }
+                else if (currentZoom === 19) {
+                    radius = originalRadius / 2;
+                }
+                else if (currentZoom === 20) {
+                    radius = originalRadius;
+                }
+                else if (currentZoom === 21) {
+                    radius = originalRadius * 2;
+                }
+                else if (currentZoom === 22) {
+                    radius = originalRadius * 4;
+                }
+                return radius;
+            }
 
-        var getDistance = function (p1, p2) {
-            var R = 6378137; // Earth’s mean radius in meter
-            var dLat = rad(p2.lat() - p1.lat());
-            var dLong = rad(p2.lng() - p1.lng());
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
-                Math.sin(dLong / 2) * Math.sin(dLong / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            var d = R * c;
-            return d; // returns the distance in meter
-        };
-        
-    </script>
+            var rad = function (x) {
+                return x * Math.PI / 180;
+            };
+
+            var getDistance = function (p1, p2) {
+                var R = 6378137; // Earth’s mean radius in meter
+                var dLat = rad(p2.lat() - p1.lat());
+                var dLong = rad(p2.lng() - p1.lng());
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(rad(p1.lat())) * Math.cos(rad(p2.lat())) *
+                    Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;
+                return d; // returns the distance in meter
+            };
+
+        </script>
 </body>
 
 </html >
