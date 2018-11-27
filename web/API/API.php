@@ -62,6 +62,7 @@ function createRecord($dbConnection, $jsonPayload)
 		$frequency = $value['frequency'];
 		$deviceID = $value['deviceID'];
 		$strength = $value['strength'];
+		date_default_timezone_set('US/Eastern');
 		$time = date("Y-m-d h:i:sa");
 
 		// Check for various error-inducing situations
