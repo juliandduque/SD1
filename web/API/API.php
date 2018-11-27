@@ -171,7 +171,8 @@ function getSomeRecords($dbConnection, $jsonPayload)
 
 	$statement = "SELECT * 
 					FROM chatterboxDB.data D1
-					WHERE D1.deviceID = ".$deviceID." AND D1.Frequency = ".$frequency.";";
+					WHERE D1.deviceID = ".$deviceID." AND D1.Frequency = ".$frequency."
+					LIMIT 10;";
     
     $query = $dbConnection->prepare($statement);
     $query->execute();
