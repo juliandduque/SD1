@@ -253,7 +253,8 @@
                                         if (jsonObject.success) {
                                             var results = jsonObject.results;
                                             var labels = results.map(function (e) {
-                                                return e.datetime;
+                                                var d = e.datetime.split(' ');
+                                                return d[1];
                                             });
                                             var data = results.map(function (e) {
                                                 return e.strength;
@@ -288,10 +289,10 @@
                                                     }]
                                                 },
                                                 options: {
-                                                    responsive: false,
+                                                    responsive: true,
+                                                    maintainAspectRatio: true,
                                                     legend: {
                                                         display: false,
-                                                        position: 'right',
                                                         onClick: null
                                                     },
                                                 }
