@@ -189,7 +189,7 @@ function getSomeRecords($dbConnection, $jsonPayload)
             'Frequency'   => $row['Frequency'],
             'strength'   => $row['strength'],
             'deviceID' => $row['deviceID'],
-			'datetime' => $row['dateimte']
+			'datetime' => $row['datetime']
         ];
         $postResults[] = $recordInformation;
     }
